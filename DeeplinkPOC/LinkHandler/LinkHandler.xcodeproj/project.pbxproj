@@ -7,15 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9AB54B25207647A400313EF4 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB54B23207647A300313EF4 /* Result.framework */; };
+		9AB54B26207647A400313EF4 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB54B24207647A400313EF4 /* ReactiveSwift.framework */; };
+		9AB54B2A2077720400313EF4 /* LinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB54B292077720400313EF4 /* LinkHandler.swift */; };
 		9ADB527520760F08000D03F1 /* LinkHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ADB527320760F08000D03F1 /* LinkHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9ADB528320760F1B000D03F1 /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528120760F1B000D03F1 /* Link.swift */; };
 		9ADB528420760F1B000D03F1 /* LinkFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528220760F1B000D03F1 /* LinkFactory.swift */; };
 		9ADB528720761053000D03F1 /* SingleSignOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528620761053000D03F1 /* SingleSignOn.swift */; };
 		9ADB5289207611A6000D03F1 /* DispatchAfter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB5288207611A6000D03F1 /* DispatchAfter.swift */; };
-		9ADB528D207616E4000D03F1 /* LinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528C207616E4000D03F1 /* LinkHandler.swift */; };
+		9ADB528D207616E4000D03F1 /* LinkDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528C207616E4000D03F1 /* LinkDispatcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9AB54B23207647A300313EF4 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = ../../Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
+		9AB54B24207647A400313EF4 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = ../../Carthage/Build/iOS/ReactiveSwift.framework; sourceTree = "<group>"; };
+		9AB54B292077720400313EF4 /* LinkHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkHandler.swift; sourceTree = "<group>"; };
 		9ADB527020760F08000D03F1 /* LinkHandler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LinkHandler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9ADB527320760F08000D03F1 /* LinkHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinkHandler.h; sourceTree = "<group>"; };
 		9ADB527420760F08000D03F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -23,7 +29,7 @@
 		9ADB528220760F1B000D03F1 /* LinkFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkFactory.swift; sourceTree = "<group>"; };
 		9ADB528620761053000D03F1 /* SingleSignOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSignOn.swift; sourceTree = "<group>"; };
 		9ADB5288207611A6000D03F1 /* DispatchAfter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchAfter.swift; sourceTree = "<group>"; };
-		9ADB528C207616E4000D03F1 /* LinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkHandler.swift; sourceTree = "<group>"; };
+		9ADB528C207616E4000D03F1 /* LinkDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkDispatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,21 +37,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AB54B25207647A400313EF4 /* Result.framework in Frameworks */,
+				9AB54B26207647A400313EF4 /* ReactiveSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9AB54B22207647A300313EF4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9AB54B24207647A400313EF4 /* ReactiveSwift.framework */,
+				9AB54B23207647A300313EF4 /* Result.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9ADB526620760F08000D03F1 = {
 			isa = PBXGroup;
 			children = (
-				9ADB528C207616E4000D03F1 /* LinkHandler.swift */,
+				9AB54B292077720400313EF4 /* LinkHandler.swift */,
+				9ADB528C207616E4000D03F1 /* LinkDispatcher.swift */,
 				9ADB528620761053000D03F1 /* SingleSignOn.swift */,
 				9ADB528120760F1B000D03F1 /* Link.swift */,
 				9ADB528220760F1B000D03F1 /* LinkFactory.swift */,
 				9ADB527220760F08000D03F1 /* LinkHandler */,
 				9ADB527120760F08000D03F1 /* Products */,
+				9AB54B22207647A300313EF4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -149,7 +168,8 @@
 				9ADB5289207611A6000D03F1 /* DispatchAfter.swift in Sources */,
 				9ADB528720761053000D03F1 /* SingleSignOn.swift in Sources */,
 				9ADB528420760F1B000D03F1 /* LinkFactory.swift in Sources */,
-				9ADB528D207616E4000D03F1 /* LinkHandler.swift in Sources */,
+				9ADB528D207616E4000D03F1 /* LinkDispatcher.swift in Sources */,
+				9AB54B2A2077720400313EF4 /* LinkHandler.swift in Sources */,
 				9ADB528320760F1B000D03F1 /* Link.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

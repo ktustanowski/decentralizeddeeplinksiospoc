@@ -10,15 +10,13 @@ import UIKit
 
 struct AllViewModel {
     let items: [String]
-    let promos: [String: [String]]
-    let content: [String: [String]]
     
     func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
-        return PromoViewModel(items: promos[items[indexPath.row]]!)
+        return PromoViewModel(item: items[indexPath.row])
     }
     
     func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
-        return ContentViewModel(items: content[items[indexPath.row]]!)
+        return ContentViewModel(item: items[indexPath.row])
     }
 }
 

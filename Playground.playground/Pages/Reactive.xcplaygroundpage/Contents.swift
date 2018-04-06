@@ -61,7 +61,22 @@ func dispatchAfter(_ delay: Double, closure: @escaping () -> ()) {
 //        }
 //        //TODO: start navigation here based on outcome
 //}
-LinkHandler.handle(URL(string: "http://www.o2.pl?sso=go")!)
+
+struct LinkerDelegate: LinkDispatcherDelegate {
+    func willStartLinking() {
+        print("Reset to loading screen")
+    }
+    
+    func link(with link: Link) {
+        print("Got: \(link)")
+    }
+}
+
+
+let linkerDelegate = LinkerDelegate()
+let linker = LinkDispatcher(delegate: linkerDelegate)
+linker.handle(URL(string: "dlpoc://Item/2/Content/3?sso=go")!)
+
 
 
 PlaygroundPage.current.needsIndefiniteExecution = true

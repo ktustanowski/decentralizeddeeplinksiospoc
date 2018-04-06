@@ -16,17 +16,17 @@ public struct SingleSignOn {
         case .singleSignOn(with: let url as URL):
             return SignalProducer<LoginStatus, NoError> {observer, _ in
                 dispatchAfter(0.5) {
-                    observer.send(value: .loggedIn(provider: "Optimum_URL"))
+                    observer.send(value: .loggedIn)
                     observer.sendCompleted()
                 }
-                }.logEvents(identifier: "SSO")
+                }.logEvents(identifier: "SSO_URL")
         case .singleSignOn(with: let url as String):
             return SignalProducer<LoginStatus, NoError> {observer, _ in
                 dispatchAfter(0.5) {
-                    observer.send(value: .loggedIn(provider: "Optimum_STRING"))
+                    observer.send(value: .loggedIn)
                     observer.sendCompleted()
                 }
-                }.logEvents(identifier: "SSO")
+                }.logEvents(identifier: "SSO_STR")
         default:
             return SignalProducer.init(value: .notNeeded)
         }
@@ -36,7 +36,7 @@ public struct SingleSignOn {
 public extension SingleSignOn {
     public enum LoginStatus {
         case notNeeded
-        case failed(error: Error)
-        case loggedIn(provider: Any)
+        case failed
+        case loggedIn
     }
 }

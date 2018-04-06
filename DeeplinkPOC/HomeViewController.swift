@@ -7,32 +7,67 @@
 //
 
 import UIKit
-
+import LinkHandler
 
 struct HomeViewModel {
     let allItems: [String]
     let items: [String]
-    let promos: [String: [String]]
-    let content: [String: [String]]
-    
+        
     func makeAllViewModel() -> AllViewModel {
-        return AllViewModel(items: allItems,
-                            promos: promos,
-                            content: content)
+        return AllViewModel(items: allItems)
     }
     
+    func makePromoViewModel(with itemId: String) -> PromoViewModel {
+        return PromoViewModel(item: itemId)
+    }
+
     func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
-        return PromoViewModel(items: promos[items[indexPath.row]]!)
+        return makePromoViewModel(with: items[indexPath.row])
     }
 
     func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
-        return ContentViewModel(items: content[items[indexPath.row]]!)
+        return makeContentViewModel(with: items[indexPath.row])
+    }
+
+    func makeContentViewModel(with itemId: String) -> ContentViewModel {
+        return ContentViewModel(item: itemId)
     }
 }
 
 class HomeViewController: UITableViewController {
-
+    var linkHandling: LinkHandling?
     var viewModel: HomeViewModel?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        completeLinking()
+    }
+    
+    deinit {
+        print("DEINITED HOME!")
+    }
+}
+
+extension HomeViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        // if view is not loaded yet we should probably wait for it
+        guard isViewLoaded else { return .delayed(link, animated) }
+        
+        switch link.intent {
+        case .showSettings, .showLegal, .showLogin, .showTermsConditions:
+            performSegue(withIdentifier: "ToSettings", sender: link)
+            return .opened(link)
+        case .showPromos(id: _, parentId: _):
+            performSegue(withIdentifier: "ToPromo", sender: link)
+            return .passedThrough(link)
+        case .showContent(id: _, parentId: _):
+            performSegue(withIdentifier: "ToContent", sender: link)
+            return .passedThrough(link)
+        default:
+            return .rejected(link, "Unsupported link")
+        }
+    }
 }
 
 extension HomeViewController {
@@ -56,10 +91,24 @@ extension HomeViewController {
             allViewController?.viewModel = viewModel?.makeAllViewModel()
         case "ToPromo":
             let promoViewController = segue.destination as? PromoViewController
-            promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            if let link = sender as? Link {
+                if case let .showPromos(id: _, parentId: parentId) = link.intent {
+                    promoViewController?.viewModel = viewModel?.makePromoViewModel(with: parentId)
+                    promoViewController?.open(link: link, animated: true)
+                }
+            } else {
+                promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            }
         case "ToContent":
             let contentViewController = segue.destination as? ContentViewController
-            contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            if let link = sender as? Link {
+                if case let .showContent(id: _, parentId: parentId) = link.intent {
+                    contentViewController?.viewModel = viewModel?.makeContentViewModel(with: parentId)
+                    contentViewController?.open(link: link, animated: true)
+                }
+            } else {
+                contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            }
         default:
             print("Ooops!")
         }

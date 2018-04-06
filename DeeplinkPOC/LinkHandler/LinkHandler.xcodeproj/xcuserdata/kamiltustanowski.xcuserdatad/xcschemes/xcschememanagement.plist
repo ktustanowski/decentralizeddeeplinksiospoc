@@ -4,15 +4,15 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>DeeplinkPOC.xcscheme</key>
+		<key>LinkHandler.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>8</integer>
+			<integer>9</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>9A37F89A206E1DC6009CC4FF</key>
+		<key>9ADB526F20760F08000D03F1</key>
 		<dict>
 			<key>primary</key>
 			<true/>

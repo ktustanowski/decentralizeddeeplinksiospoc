@@ -7,105 +7,73 @@
 //
 
 import Foundation
-import ReactiveSwift
-import Result
 
-public struct LinkHandler {
-
-    public static func handle(_ userActivity: NSUserActivity) {
-        let linkProducer = LinkFactory.make(with: userActivity)
-        startLinkFlow(with: linkProducer)
+public enum LinkHandling: CustomStringConvertible {
+    
+    // deeplink successfully handled
+    case opened(Link)
+    
+    // deeplink was rejected because it can't be handeled, with optional log message
+    case rejected(Link, String?)
+    
+    // deeplink handling delayed because more data is needed
+    case delayed(Link, Bool)
+    
+    // deeplink was passed through to some other handler
+    case passedThrough(Link)
+    
+    public var inProgress: Bool {
+        switch self {
+        case .delayed(_, _):
+            return true
+        default:
+            return false
+        }
     }
     
-    public static func handle(_ url: URL) {
-        let linkProducer = LinkFactory.make(with: url)
-        startLinkFlow(with: linkProducer)
-    }
-    
-    public static func handle(_ info: [String: String]) {
-        let linkProducer = LinkFactory.make(with: info)
-        startLinkFlow(with: linkProducer)
-    }
-
-    private static func startLinkFlow(with linkProducer: SignalProducer<Link?, NoError>) {
-        let linkOnlyProducer = linkProducer
-            .skipNil()
-            .take(first: 1)
-            .logEvents(identifier: "LPP")
-
-        var linkFlowProducer = linkOnlyProducer.flatMap(.latest) { link in
-            // Any other operation that needs to be done before linking flow
-            // commences can be added to the zip
-            SignalProducer.zip(ConfigurationProvider.load(), //load some config file
-                               SingleSignOn.login(using: link), //try to login using SSO flow
-                               SignalProducer.init(value: link)) // just pass the link
-            }.startWithResult { result in
-                switch result {
-                case .success(let (isConfigLoaded, ssoLoginStatus, link)):
-                    print("Start linking now!")
-                    print("GOT: config loaded: \(isConfigLoaded), sso authenticated: \(ssoLoginStatus), link: \(link)")
-                //TODO: Handle appropriately
-                case .failure(let error):
-                    print("GOT: \(error)")
-                }
-                //TODO: start navigation here based on outcome
+    public var description: String {
+        switch self {
+        case .opened(let deeplink):
+            return "Opened deeplink \(deeplink)"
+        case .rejected(let deeplink, let reason):
+            return "Rejected deeplink \(deeplink) for reason : \(reason ?? "unknown")"
+        case .delayed(let deeplink, _):
+            return "Delayed deeplink \(deeplink)"
+        case .passedThrough(let deeplink):
+            return "Passed through deeplink \(deeplink)"
         }
     }
 }
 
-/// Some pre-linking-needed config loading
-struct ConfigurationProvider {
-    static func load() -> SignalProducer<Bool, NoError> {
-        return SignalProducer {observer, _ in
-            dispatchAfter(1.0) {
-                // Pretend we load anything here
-                observer.send(value: true)
-                observer.sendCompleted()
-            }
-            }.logEvents(identifier: "CP")
-    }
+public protocol LinkHandler: class {
+    // stores the current state of deeplink handling
+    var linkHandling: LinkHandling? { get set }
+    // attempts to handle deeplink and returns next state
+    func process(link: Link, animated: Bool) -> LinkHandling
 }
 
-//let linkParserProducer = LinkFactory.make(with: URL(string: "http://www.o2.pl?sso=go")!)
-//    .skipNil()
-//    .take(first: 1)
-//    .logEvents(identifier: "LPP")
-
-//let homeDataProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(1.0) {
-//        observer.send(value: true)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "HP")
-//
-//let newRequirementProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(3.0) {
-//        observer.send(value: false)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "NEW")
-//
-//let newestRequirementProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(3.5) {
-//        observer.send(value: false)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "NEWEST")
-//
-//let x = linkParserProducer.flatMap(.latest) { link in
-//    SignalProducer.zip(homeDataProducer,
-//                       SingleSignOn.login(using: link),
-//                       newRequirementProducer,
-//                       newestRequirementProducer,
-//                       SignalProducer.init(value: link))
-//    }.startWithResult { result in
-//        switch result {
-//        case .success(let (isHomeLoaded, ssoLoginStatus, newFeature, newestFeature, link)):
-//            print("GOT: home loaded: \(isHomeLoaded), sso authenticated: \(ssoLoginStatus), new requirement: \(newFeature), newest requirement: \(newestFeature) link: \(link)")
-//        //TODO: Handle appropriately
-//        case .failure(let error):
-//            print("GOT: \(error)")
-//        }
-//        //TODO: start navigation here based on outcome
-//}
-//
+public extension LinkHandler {
+    
+    // Attempts to handle deeplink and updates its state,
+    // should be always called instead of method that returns state
+    public func open(link: Link, animated: Bool) {
+        let result = process(link: link, animated: animated)
+        print(result)
+        // you can track rejected or opened deeplinks here too
+        linkHandling = result
+        
+        //        if case let .passedThrough(deeplink) = result {
+        //            handler.open(link: deeplink, animated: animated) as Void
+        //        }
+    }
+        
+    // Call to complete deeplink handling if it was delayed
+    public func completeLinking(or alternative: (() -> Void)? = nil) { // maybe add sth like completeLinkingOr { } <- completion handler if completion wasn't needed
+        if case let .delayed(link, animated)? = self.linkHandling {
+            open(link: link, animated: animated) as Void
+            if case .delayed? = self.linkHandling { return }
+        } else {
+            alternative?()
+        }
+    }
+}
