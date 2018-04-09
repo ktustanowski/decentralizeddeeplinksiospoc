@@ -14,7 +14,6 @@
 		9ADB528320760F1B000D03F1 /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528120760F1B000D03F1 /* Link.swift */; };
 		9ADB528420760F1B000D03F1 /* LinkFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528220760F1B000D03F1 /* LinkFactory.swift */; };
 		9ADB528720761053000D03F1 /* SingleSignOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528620761053000D03F1 /* SingleSignOn.swift */; };
-		9ADB5289207611A6000D03F1 /* DispatchAfter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB5288207611A6000D03F1 /* DispatchAfter.swift */; };
 		9ADB528D207616E4000D03F1 /* LinkDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528C207616E4000D03F1 /* LinkDispatcher.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,7 +27,6 @@
 		9ADB528120760F1B000D03F1 /* Link.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Link.swift; sourceTree = "<group>"; };
 		9ADB528220760F1B000D03F1 /* LinkFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkFactory.swift; sourceTree = "<group>"; };
 		9ADB528620761053000D03F1 /* SingleSignOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSignOn.swift; sourceTree = "<group>"; };
-		9ADB5288207611A6000D03F1 /* DispatchAfter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchAfter.swift; sourceTree = "<group>"; };
 		9ADB528C207616E4000D03F1 /* LinkDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkDispatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,7 +79,6 @@
 			children = (
 				9ADB527320760F08000D03F1 /* LinkHandler.h */,
 				9ADB527420760F08000D03F1 /* Info.plist */,
-				9ADB5288207611A6000D03F1 /* DispatchAfter.swift */,
 			);
 			path = LinkHandler;
 			sourceTree = "<group>";
@@ -165,7 +162,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9ADB5289207611A6000D03F1 /* DispatchAfter.swift in Sources */,
 				9ADB528720761053000D03F1 /* SingleSignOn.swift in Sources */,
 				9ADB528420760F1B000D03F1 /* LinkFactory.swift in Sources */,
 				9ADB528D207616E4000D03F1 /* LinkDispatcher.swift in Sources */,

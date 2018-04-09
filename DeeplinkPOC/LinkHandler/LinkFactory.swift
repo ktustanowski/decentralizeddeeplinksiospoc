@@ -56,29 +56,29 @@ private struct DeepLinkParser {
             if components.count == 3 {
                 let childId = "\(parentId) \(components[1]) \(components[2])"
                 if childId.contains("Content") {
-                    return SignalProducer.init(value: Link(intent: .showContent(id: childId, parentId: parentId), authorization: authorization))
+                    return SignalProducer(value: Link(intent: .showContent(id: childId, parentId: parentId), authorization: authorization))
                 } else if childId.contains("Promo") {
-                    return SignalProducer.init(value: Link(intent: .showPromos(id: childId, parentId: parentId), authorization: authorization))
+                    return SignalProducer(value: Link(intent: .showPromos(id: childId, parentId: parentId), authorization: authorization))
                 } else {
                     return .empty
                 }
             } else {
-                return SignalProducer.init(value: Link(intent: .showItem(id: parentId), authorization: authorization))
+                return SignalProducer(value: Link(intent: .showItem(id: parentId), authorization: authorization))
             }
         case "Settings":
             guard let subScreen = components.last else {
-                return SignalProducer.init(value: Link(intent: .showSettings, authorization: authorization))
+                return SignalProducer(value: Link(intent: .showSettings, authorization: authorization))
             }
             
             switch subScreen {
             case "Legal":
-                return SignalProducer.init(value: Link(intent: .showLegal, authorization: authorization))
+                return SignalProducer(value: Link(intent: .showLegal, authorization: authorization))
             case "Login":
-                return SignalProducer.init(value: Link(intent: .showLogin, authorization: authorization))
+                return SignalProducer(value: Link(intent: .showLogin, authorization: authorization))
             case "Tc":
-                return SignalProducer.init(value: Link(intent: .showTermsConditions, authorization: authorization))
+                return SignalProducer(value: Link(intent: .showTermsConditions, authorization: authorization))
             default:
-                return SignalProducer.init(value: Link(intent: .showSettings, authorization: authorization))
+                return SignalProducer(value: Link(intent: .showSettings, authorization: authorization))
             }
         default:
             return .empty
@@ -88,30 +88,30 @@ private struct DeepLinkParser {
 
 private struct UniversalLinkParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return SignalProducer.init(value: nil) }
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return SignalProducer(value: nil) }
         
-        return SignalProducer.init(value: Link(intent:.showItem(id: "ul::1")))
+        return SignalProducer(value: Link(intent:.showItem(id: "ul::1")))
     }
 }
 
 private struct ShortcutParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == "ForceTouchType" else { return SignalProducer.init(value: nil) }
+        guard userActivity.activityType == "ForceTouchType" else { return SignalProducer(value: nil) }
         
-        return SignalProducer.init(value: Link(intent: .showItem(id: "s::1")))
+        return SignalProducer(value: Link(intent: .showItem(id: "s::1")))
     }
 }
 
 private struct SpotlightParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == CSSearchableItemActionType else { return SignalProducer.init(value: nil) }
+        guard userActivity.activityType == CSSearchableItemActionType else { return SignalProducer(value: nil) }
         
-        return SignalProducer.init(value: Link(intent: .showItem(id: "sl::1")))
+        return SignalProducer(value: Link(intent: .showItem(id: "sl::1")))
     }
 }
 
 private struct PushParser {
     static func parse(_ pushDictionary: [String : String]) -> SignalProducer<Link?, NoError> {
-        return SignalProducer.init(value: Link(intent: .showItem(id: "p::1")))
+        return SignalProducer(value: Link(intent: .showItem(id: "p::1")))
     }
 }
