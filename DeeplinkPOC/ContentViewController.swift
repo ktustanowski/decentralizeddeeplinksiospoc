@@ -15,22 +15,22 @@ extension ContentViewController: LinkHandler {
         
         switch link.intent {
         case .showLegal:
-            openOnHome(link)
+            navigateToHome(with: link)
             return .passedThrough(link)
         case .showContent(id: let contentId, parentId: _):
-            selectItem(with: contentId)
+            selectItem(contentId)
             return .opened(link)
         default:
             return .rejected(link, "Unrecognized link")
         }
     }
     
-    func openOnHome(_ link: Link) {
-        navigationController?.popToRootViewController(animated: false)
+    func navigateToHome(with link: Link) {
+        navigationController?.popToRootViewController(animated: true)
         (navigationController?.viewControllers.first as? LinkHandler)?.open(link: link, animated: true)
     }
     
-    func selectItem(with id: String) {
+    func selectItem(_ id: String) {
         if let indexPathToSelect = viewModel?.indexPath(for: id) {
             tableView.selectRow(at: indexPathToSelect, animated: true, scrollPosition: .none)
         }
