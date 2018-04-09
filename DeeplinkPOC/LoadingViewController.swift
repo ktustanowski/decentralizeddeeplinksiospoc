@@ -10,6 +10,47 @@ import UIKit
 import ReactiveSwift
 import LinkHandler
 
+extension LoadingViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard viewModel.isDataLoaded == true else { return .delayed(link, animated) }
+        
+        switch link.intent {
+        default:
+            navigateToHome(with: link)
+            return .passedThrough(link)
+        }
+    }
+}
+
+class LoadingViewController: UIViewController {
+    var linkHandling: LinkHandling?
+    private let viewModel = LoadingViewModel()
+    
+    func navigateToHome(with link: Link? = nil) {
+        performSegue(withIdentifier: "ToHome", sender: link)
+    }
+    
+    override func viewDidLoad() {
+        viewModel.loadData { [weak self] in
+            // It we are deeplinking - this segue won't be presented to not break the flow
+            // instead the deeplink process will move on
+            self?.completeLinking(or: {
+                self?.navigateToHome()
+            })
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as? UINavigationController
+        let homeViewController = navigationController?.viewControllers.first as? HomeViewController
+        homeViewController?.viewModel = viewModel.makeHomeViewModel()
+
+        // Since we don't have view controller, we just start navigation, in process(link:)
+        // we have to open link manually to maintain the deeplink chain
+        homeViewController?.pass(link: sender as? Link, animated: true)
+    }
+}
+
 class LoadingViewModel {
     var homeItems: [String]?
     var allItems: [String]?
@@ -29,44 +70,5 @@ class LoadingViewModel {
     func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(allItems: allItems ?? [],
                              items: homeItems ?? [])
-    }
-}
-
-class LoadingViewController: UIViewController {
-    var linkHandling: LinkHandling?
-    private let viewModel = LoadingViewModel()
-    
-    override func viewDidLoad() {
-        viewModel.loadData { [weak self] in
-            self?.completeLinking(or: {
-                self?.performSegue(withIdentifier: "ToHome", sender: nil)
-            })
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let navigationController = segue.destination as? UINavigationController
-        let homeViewController = navigationController?.viewControllers.first as? HomeViewController
-        homeViewController?.viewModel = viewModel.makeHomeViewModel()
-        if let link = sender as? Link {
-            homeViewController?.open(link: link, animated: true)
-        }
-    }
-    
-    deinit {
-        print("DEINITED LOADING VC!")
-    }
-}
-
-extension LoadingViewController: LinkHandler {
-    func process(link: Link, animated: Bool) -> LinkHandling {
-        // if view is not loaded yet we should probably wait for it
-        guard viewModel.isDataLoaded == true else { return .delayed(link, animated) }
-        
-        switch link.intent {
-        default:
-            performSegue(withIdentifier: "ToHome", sender: link)
-            return .passedThrough(link)
-        }
     }
 }

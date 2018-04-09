@@ -20,17 +20,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        //TODO: check for any stuff - app might be opened directly
+        //TODO: Handle cold-open linking
         return true
     }
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        print("tried to continue")
+        linkDispatcher.handle(userActivity)
         return true
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        print("\(url)")
         linkDispatcher.handle(url)
         return true
     }
@@ -42,11 +41,12 @@ extension AppDelegate: LinkDispatcherDelegate {
     }
     
     func willStartLinking() {
+        // Do anything needed to reset the app to common DL startpoint
         loadingViewController?.dismiss(animated: false, completion: nil)
-        
     }
     
     func link(with link: Link) {
+        // Start deeplinking process
         window?.rootViewController = UIStoryboard.init(name: "Main", bundle: nil).instantiateInitialViewController()
         loadingViewController?.open(link: link, animated: true)
     }

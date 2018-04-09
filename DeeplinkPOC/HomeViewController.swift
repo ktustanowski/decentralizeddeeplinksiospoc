@@ -9,28 +9,45 @@
 import UIKit
 import LinkHandler
 
-struct HomeViewModel {
-    let allItems: [String]
-    let items: [String]
+extension HomeViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard isViewLoaded else { return .delayed(link, animated) }
         
-    func makeAllViewModel() -> AllViewModel {
-        return AllViewModel(items: allItems)
-    }
-    
-    func makePromoViewModel(with itemId: String) -> PromoViewModel {
-        return PromoViewModel(item: itemId)
-    }
-
-    func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
-        return makePromoViewModel(with: items[indexPath.row])
-    }
-
-    func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
-        return makeContentViewModel(with: items[indexPath.row])
-    }
-
-    func makeContentViewModel(with itemId: String) -> ContentViewModel {
-        return ContentViewModel(item: itemId)
+        switch link.intent {
+        case .showSettings, .showLegal, .showLogin, .showTermsConditions:
+            performSegue(withIdentifier: "ToSettings", sender: link)
+            return .passedThrough(link)
+        case .showPromos(id: _, parentId: let parentId):
+            if viewModel?.items.contains(parentId) == true {
+                // If item is on home perform deep link
+                performSegue(withIdentifier: "ToPromo", sender: link)
+                return .passedThrough(link)
+            } else if viewModel?.allItems.contains(parentId) == true {
+                // If item isn't on home perform but is on All screen
+                // deep link to All screen first
+                performSegue(withIdentifier: "ToAll", sender: link)
+                return .passedThrough(link)
+            } else {
+                // No item? Then just reject deep link.
+                return .rejected(link, "\(parentId) not found")
+            }
+        case .showContent(id: _, parentId: let parentId):
+            if viewModel?.items.contains(parentId) == true {
+                // If item is on home perform deep link
+                performSegue(withIdentifier: "ToContent", sender: link)
+                return .passedThrough(link)
+            } else if viewModel?.allItems.contains(parentId) == true {
+                // If item isn't on home perform but is on All screen
+                // deep link to All screen first
+                performSegue(withIdentifier: "ToAll", sender: link)
+                return .passedThrough(link)
+            } else {
+                // No item? Then just reject deep link.
+                return .rejected(link, "\(parentId) not found")
+            }
+        default:
+            return .rejected(link, "Unsupported link")
+        }
     }
 }
 
@@ -38,35 +55,35 @@ class HomeViewController: UITableViewController {
     var linkHandling: LinkHandling?
     var viewModel: HomeViewModel?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         completeLinking()
     }
-    
-    deinit {
-        print("DEINITED HOME!")
-    }
 }
 
-extension HomeViewController: LinkHandler {
-    func process(link: Link, animated: Bool) -> LinkHandling {
-        // if view is not loaded yet we should probably wait for it
-        guard isViewLoaded else { return .delayed(link, animated) }
-        
-        switch link.intent {
-        case .showSettings, .showLegal, .showLogin, .showTermsConditions:
-            performSegue(withIdentifier: "ToSettings", sender: link)
-            return .opened(link)
-        case .showPromos(id: _, parentId: _):
-            performSegue(withIdentifier: "ToPromo", sender: link)
-            return .passedThrough(link)
-        case .showContent(id: _, parentId: _):
-            performSegue(withIdentifier: "ToContent", sender: link)
-            return .passedThrough(link)
-        default:
-            return .rejected(link, "Unsupported link")
-        }
+struct HomeViewModel {
+    let allItems: [String]
+    let items: [String]
+    
+    func makeAllViewModel() -> AllViewModel {
+        return AllViewModel(items: allItems)
+    }
+    
+    func makePromoViewModel(with itemId: String) -> PromoViewModel {
+        return PromoViewModel(item: itemId)
+    }
+    
+    func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
+        return makePromoViewModel(with: items[indexPath.row])
+    }
+    
+    func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
+        return makeContentViewModel(with: items[indexPath.row])
+    }
+    
+    func makeContentViewModel(with itemId: String) -> ContentViewModel {
+        return ContentViewModel(item: itemId)
     }
 }
 
@@ -86,15 +103,19 @@ extension HomeViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let identifier = segue.identifier else { return }
         switch identifier {
+        case "ToSettings":
+            let settingsViewController = segue.destination as? SettingsViewController
+            settingsViewController?.pass(link: sender as? Link, animated: true)
         case "ToAll":
             let allViewController = segue.destination as? AllViewController
             allViewController?.viewModel = viewModel?.makeAllViewModel()
+            allViewController?.pass(link: sender as? Link, animated: true)
         case "ToPromo":
             let promoViewController = segue.destination as? PromoViewController
             if let link = sender as? Link {
                 if case let .showPromos(id: _, parentId: parentId) = link.intent {
                     promoViewController?.viewModel = viewModel?.makePromoViewModel(with: parentId)
-                    promoViewController?.open(link: link, animated: true)
+                    promoViewController?.pass(link: link, animated: true)
                 }
             } else {
                 promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
@@ -104,7 +125,7 @@ extension HomeViewController {
             if let link = sender as? Link {
                 if case let .showContent(id: _, parentId: parentId) = link.intent {
                     contentViewController?.viewModel = viewModel?.makeContentViewModel(with: parentId)
-                    contentViewController?.open(link: link, animated: true)
+                    contentViewController?.pass(link: link, animated: true)
                 }
             } else {
                 contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)

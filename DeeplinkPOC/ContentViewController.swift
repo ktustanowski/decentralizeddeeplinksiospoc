@@ -9,29 +9,31 @@
 import UIKit
 import LinkHandler
 
-class ContentViewModel {
-    let item: String
-    var contentItems: [String]?
-    
-    var isLoaded: Bool {
-        return contentItems != nil
-    }
-    
-    func load(completion: (() -> Void)?) {
-        dispatchAfter(1.0) { [weak self] in
-            self?.contentItems = [1, 2, 3, 4, 5, 6, 7, 8, 9].map { "\(self?.item ?? "") Content \($0)" }
-            completion?()
-        }        
-    }
-    
-    func indexPath(for id: String) -> IndexPath? {
-        guard let index = contentItems?.index(of: id) else { return nil }
+extension ContentViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard viewModel?.isLoaded == true else { return .delayed(link, animated) }
         
-        return IndexPath(row: index, section: 0)
+        switch link.intent {
+        case .showLegal:
+            openOnHome(link)
+            return .passedThrough(link)
+        case .showContent(id: let contentId, parentId: _):
+            selectItem(with: contentId)
+            return .opened(link)
+        default:
+            return .rejected(link, "Unrecognized link")
+        }
     }
     
-    init(item: String) {
-        self.item = item
+    func openOnHome(_ link: Link) {
+        navigationController?.popToRootViewController(animated: false)
+        (navigationController?.viewControllers.first as? LinkHandler)?.open(link: link, animated: true)
+    }
+    
+    func selectItem(with id: String) {
+        if let indexPathToSelect = viewModel?.indexPath(for: id) {
+            tableView.selectRow(at: indexPathToSelect, animated: true, scrollPosition: .none)
+        }
     }
 }
 
@@ -40,26 +42,14 @@ class ContentViewController: UITableViewController {
     
     var viewModel: ContentViewModel?
     
+    @IBAction func navigateToLegal(_ sender: Any) {
+        open(link: Link(intent: .showLegal), animated: true)
+    }
+    
     override func viewDidLoad() {
         viewModel?.load { [weak self] in
             self?.tableView.reloadData()
             self?.completeLinking()
-        }
-    }
-}
-
-extension ContentViewController: LinkHandler {
-    func process(link: Link, animated: Bool) -> LinkHandling {
-        guard viewModel?.isLoaded == true else { return .delayed(link, animated) }
-        
-        switch link.intent {
-        case .showContent(id: let contentId, parentId: _):
-            if let indexPathToSelect = viewModel?.indexPath(for: contentId) {
-                tableView.selectRow(at: indexPathToSelect, animated: true, scrollPosition: .none)
-            }
-            return .opened(link)
-        default:
-            return .rejected(link, "Unrecognized link")
         }
     }
 }
@@ -74,5 +64,31 @@ extension ContentViewController {
         cell.textLabel?.text = viewModel?.contentItems?[indexPath.row]
         
         return cell
+    }
+}
+
+class ContentViewModel {
+    let item: String
+    var contentItems: [String]?
+    
+    var isLoaded: Bool {
+        return contentItems != nil
+    }
+    
+    func load(completion: (() -> Void)?) {
+        dispatchAfter(1.0) { [weak self] in
+            self?.contentItems = [1, 2, 3, 4, 5, 6, 7, 8, 9].map { "\(self?.item ?? "") Content \($0)" }
+            completion?()
+        }
+    }
+    
+    func indexPath(for id: String) -> IndexPath? {
+        guard let index = contentItems?.index(of: id) else { return nil }
+        
+        return IndexPath(row: index, section: 0)
+    }
+    
+    init(item: String) {
+        self.item = item
     }
 }

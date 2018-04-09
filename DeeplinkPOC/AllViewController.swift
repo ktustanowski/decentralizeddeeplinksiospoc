@@ -7,22 +7,55 @@
 //
 
 import UIKit
+import LinkHandler
 
 struct AllViewModel {
     let items: [String]
     
+    func makePromoViewModel(with itemId: String) -> PromoViewModel {
+        return PromoViewModel(item: itemId)
+    }
+    
     func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
-        return PromoViewModel(item: items[indexPath.row])
+        return makePromoViewModel(with: items[indexPath.row])
     }
     
     func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
-        return ContentViewModel(item: items[indexPath.row])
+        return makeContentViewModel(with: items[indexPath.row])
+    }
+    
+    func makeContentViewModel(with itemId: String) -> ContentViewModel {
+        return ContentViewModel(item: itemId)
     }
 }
 
 
 class AllViewController: UITableViewController {
+    var linkHandling: LinkHandling?
     var viewModel: AllViewModel?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        completeLinking()
+    }
+}
+
+extension AllViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard isViewLoaded else { return .delayed(link, animated) }
+        
+        switch link.intent {
+        case .showPromos(id: _, parentId: _):
+            performSegue(withIdentifier: "ToPromo", sender: link)
+            return .passedThrough(link)
+        case .showContent(id: _, parentId: _):
+            performSegue(withIdentifier: "ToContent", sender: link)
+            return .passedThrough(link)
+        default:
+            return .rejected(link, "Unsupported link")
+        }
+    }
 }
 
 extension AllViewController {
@@ -43,10 +76,22 @@ extension AllViewController {
         switch identifier {
         case "ToPromo":
             let promoViewController = segue.destination as? PromoViewController
-            promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            if let link = sender as? Link,
+                case let .showPromos(id: _, parentId: parentId) = link.intent {
+                    promoViewController?.viewModel = viewModel?.makePromoViewModel(with: parentId)
+                    promoViewController?.pass(link: link, animated: true)
+            } else {
+                promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            }
         case "ToContent":
             let contentViewController = segue.destination as? ContentViewController
-            contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            if let link = sender as? Link,
+                case let .showContent(id: _, parentId: parentId) = link.intent {
+                    contentViewController?.viewModel = viewModel?.makeContentViewModel(with: parentId)
+                    contentViewController?.pass(link: link, animated: true)
+            } else {
+                contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
+            }
         default:
             print("Ooops!")
         }

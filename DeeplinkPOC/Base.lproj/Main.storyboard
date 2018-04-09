@@ -91,7 +91,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Settings" id="gcZ-DU-7BA">
                             <connections>
-                                <segue destination="We3-ft-hmI" kind="show" id="iPh-DH-5s7"/>
+                                <segue destination="We3-ft-hmI" kind="show" identifier="ToSettings" id="iPh-DH-5s7"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -145,9 +145,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="9PV-7y-HcW">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0pI-Xe-uA1">
+                                    <rect key="frame" x="129" y="7" width="116" height="30"/>
+                                    <state key="normal" title="Check legal stuff"/>
+                                    <connections>
+                                        <action selector="navigateToLegal:" destination="fFP-3Y-e5P" eventType="touchUpInside" id="JpN-sq-EkS"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="0pI-Xe-uA1" firstAttribute="centerY" secondItem="9PV-7y-HcW" secondAttribute="centerY" id="Xt4-Dn-qYU"/>
+                                <constraint firstItem="0pI-Xe-uA1" firstAttribute="centerX" secondItem="9PV-7y-HcW" secondAttribute="centerX" id="nJ8-OQ-nP9"/>
+                            </constraints>
+                        </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ContentCell" textLabel="xF5-2m-jSo" style="IBUITableViewCellStyleDefault" id="sx4-2Y-UB2">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sx4-2Y-UB2" id="Lg2-WJ-Njg">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
@@ -189,21 +207,21 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="201"/>
                                         <state key="normal" title="Login"/>
                                         <connections>
-                                            <segue destination="pkJ-wZ-Tc5" kind="show" id="uMn-ex-OWk"/>
+                                            <segue destination="pkJ-wZ-Tc5" kind="show" identifier="ToLogin" id="uMn-ex-OWk"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xc2-z4-lCc">
                                         <rect key="frame" x="0.0" y="201" width="375" height="201"/>
                                         <state key="normal" title="Terms &amp; Conditions"/>
                                         <connections>
-                                            <segue destination="1Fw-IK-O9y" kind="show" id="tG0-KT-6LY"/>
+                                            <segue destination="1Fw-IK-O9y" kind="show" identifier="ToTermsConditions" id="tG0-KT-6LY"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jtw-Jd-vAe">
                                         <rect key="frame" x="0.0" y="402" width="375" height="201"/>
                                         <state key="normal" title="Legal"/>
                                         <connections>
-                                            <segue destination="IcT-Ma-UiL" kind="show" id="Z92-hf-e7z"/>
+                                            <segue destination="IcT-Ma-UiL" kind="show" identifier="ToLegal" id="Z92-hf-e7z"/>
                                         </connections>
                                     </button>
                                 </subviews>

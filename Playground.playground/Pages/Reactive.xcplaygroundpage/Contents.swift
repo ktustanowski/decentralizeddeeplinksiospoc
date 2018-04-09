@@ -75,7 +75,7 @@ struct LinkerDelegate: LinkDispatcherDelegate {
 
 let linkerDelegate = LinkerDelegate()
 let linker = LinkDispatcher(delegate: linkerDelegate)
-linker.handle(URL(string: "dlpoc://Item/2/Content/3?sso=go")!)
+linker.handle(URL(string: "dlpoc://Settings")!)
 
 
 

@@ -59,12 +59,8 @@ public extension LinkHandler {
     public func open(link: Link, animated: Bool) {
         let result = process(link: link, animated: animated)
         print(result)
-        // you can track rejected or opened deeplinks here too
-        linkHandling = result
-        
-        //        if case let .passedThrough(deeplink) = result {
-        //            handler.open(link: deeplink, animated: animated) as Void
-        //        }
+        // ANALYTICS TIP: we can track deeplink process from here
+        linkHandling = result.inProgress ? result : nil
     }
         
     // Call to complete deeplink handling if it was delayed
@@ -75,5 +71,14 @@ public extension LinkHandler {
         } else {
             alternative?()
         }
+    }
+}
+
+public extension UIViewController {
+    public func pass(link: Link?, animated: Bool) {
+        guard let linkHandler = self as? LinkHandler,
+            let link = link else { return }
+        
+        linkHandler.open(link: link, animated: animated)
     }
 }

@@ -13,20 +13,13 @@ import Result
 public struct SingleSignOn {
     public static func login(using link: Link) -> SignalProducer<LoginStatus, NoError> {
         switch link.authorization {
-        case .singleSignOn(with: let url as URL):
+        case .singleSignOn(with: _):
             return SignalProducer<LoginStatus, NoError> {observer, _ in
                 dispatchAfter(0.5) {
                     observer.send(value: .loggedIn)
                     observer.sendCompleted()
                 }
                 }.logEvents(identifier: "SSO_URL")
-        case .singleSignOn(with: let url as String):
-            return SignalProducer<LoginStatus, NoError> {observer, _ in
-                dispatchAfter(0.5) {
-                    observer.send(value: .loggedIn)
-                    observer.sendCompleted()
-                }
-                }.logEvents(identifier: "SSO_STR")
         default:
             return SignalProducer.init(value: .notNeeded)
         }

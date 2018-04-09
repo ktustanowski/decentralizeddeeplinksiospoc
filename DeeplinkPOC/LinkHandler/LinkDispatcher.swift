@@ -57,13 +57,13 @@ public struct LinkDispatcher {
                                SignalProducer.init(value: link)) // just pass the link
             }.startWithResult { result in
                 switch result {
-                case .success(let (isConfigLoaded, ssoLoginStatus, link)):
-                    self.delegate?.link(with: Link(intent: link.intent, authorization: link.authorization, didAuthorize: ssoLoginStatus == .loggedIn ))
-                //TODO: Handle appropriately
+                case .success(let (_, ssoLoginStatus, link)):
+                    self.delegate?.link(with: Link(intent: link.intent,
+                                                   authorization: link.authorization,
+                                                   didAuthorize: ssoLoginStatus == .loggedIn ))
                 case .failure(let error):
-                    print("GOT: \(error)")
+                    print("\(error)")
                 }
-                //TODO: start navigation here based on outcome
         }
     }
 }
@@ -73,55 +73,10 @@ struct ConfigurationProvider {
     static func load() -> SignalProducer<Bool, NoError> {
         return SignalProducer {observer, _ in
             dispatchAfter(1.0) {
-                // Pretend we load anything here
+                // Pretend we load some app config here
                 observer.send(value: true)
                 observer.sendCompleted()
             }
             }.logEvents(identifier: "CP")
     }
 }
-
-//let linkParserProducer = LinkFactory.make(with: URL(string: "http://www.o2.pl?sso=go")!)
-//    .skipNil()
-//    .take(first: 1)
-//    .logEvents(identifier: "LPP")
-
-//let homeDataProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(1.0) {
-//        observer.send(value: true)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "HP")
-//
-//let newRequirementProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(3.0) {
-//        observer.send(value: false)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "NEW")
-//
-//let newestRequirementProducer = SignalProducer<Bool, NoError> {observer, _ in
-//    dispatchAfter(3.5) {
-//        observer.send(value: false)
-//        observer.sendCompleted()
-//    }
-//}//.logEvents(identifier: "NEWEST")
-//
-//let x = linkParserProducer.flatMap(.latest) { link in
-//    SignalProducer.zip(homeDataProducer,
-//                       SingleSignOn.login(using: link),
-//                       newRequirementProducer,
-//                       newestRequirementProducer,
-//                       SignalProducer.init(value: link))
-//    }.startWithResult { result in
-//        switch result {
-//        case .success(let (isHomeLoaded, ssoLoginStatus, newFeature, newestFeature, link)):
-//            print("GOT: home loaded: \(isHomeLoaded), sso authenticated: \(ssoLoginStatus), new requirement: \(newFeature), newest requirement: \(newestFeature) link: \(link)")
-//        //TODO: Handle appropriately
-//        case .failure(let error):
-//            print("GOT: \(error)")
-//        }
-//        //TODO: start navigation here based on outcome
-//}
-//
-
