@@ -32,14 +32,58 @@ This also offers great control on the flow. Item that we want to show is not acc
 Additional bonus is that having this nodes setup we can reuse them. Let's say we need to be able to show user legal documents from content screen. We just prepare the link to legal page, dismiss the content ant tell home to navigate to settings because Home already knows how to handle settings links. 
 
 ## The flow - high overview
+![the flow - high overview](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Decentralised_Deeplinks.png?raw=true)
 
 ## The architecture
+### LinkDispatcher
+Top level structure and entry point to linking flow. We initialize it in AppDelegate. It prepares the Link to use later and decides when linking flow can start. So if we need to wait for a single sign on attempt to finish, any needed data / config loading or components initialization - we will. It's all based on signals so it's easy to extend. 
 
+AppDelegate implement LinkDispatcherDelegate protocol:
+```
+public protocol LinkDispatcherDelegate {
+    func willStartLinking()
+    func link(with link: Link)
+}
+```
+and then when needed it asks LinkDispatcher to handle url:
+```
+func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    linkDispatcher.handle(url)
+    return true
+}
+```
+or i.e. NSUserActivity:
+```
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    linkDispatcher.handle(userActivity)
+    return true
+}
+```
+Internally LinkDispatcher uses LinkFactory to make links based on the input:
+```
+public struct LinkFactory {
+    public static func make(with userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
+        return SignalProducer.merge(SpotlightParser.parse(userActivity),
+                                    UniversalLinkParser.parse(userActivity),
+                                    ShortcutParser.parse(userActivity))
+    }
+    
+    public static func make(with url: URL) -> SignalProducer<Link?, NoError> {
+        return DeepLinkParser.parse(url)
+    }
+    
+    public static func make(with info: [AnyHashable : Any]) -> SignalProducer<Link?, NoError> {
+        return PushParser.parse(info)
+    }
+}
+```
+Which then uses specialized parsers for any supported kind of input:
+* DeepLinkParser
+* ShortcutParser
+* UniversalLinkParser
+* SpotlightParser
+* PushParser
 
-
-
-
-This very simple PoC app is simulating how real application works like data loading 
 
 I'm using term deep links but the goal is to actually support also other ways of interapp commuincation. To have one starting point for all this kind of flows in the app. Like Spotlight search, Universal likns etc.
 
