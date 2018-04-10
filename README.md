@@ -128,11 +128,11 @@ extension LoadingViewController: LinkHandler {
 }
 ```
 Before LoadingViewController is ready every linking attempt will end in delaying the flow `return .delayed(link, animated)`.
-Then we need to attempt to continue when data is ready which in this case will be when view model finishes data loading:
+Then we need to continue when data is ready which in this case will be when view model finishes data loading:
 ```    
 override func viewDidLoad() {
     viewModel.loadData { [weak self] in
-        // It we are deeplinking - this segue won't be presented to not break the flow
+        // If we are deeplinking - this segue won't be presented to not break the flow
         // instead the deeplink process will move on
         self?.completeLinking(or: { self?.navigateToHome() })
     }
@@ -147,7 +147,7 @@ switch link.intent {
     }
 }
 ```
-Since this screen is just "in the way" this logic is very simple. But we are using Storyboards so, sadly, passing link requires additional step:
+Since this screen is just "in the way" this logic is very simple. But we are using Storyboards so, sadly, passing the link requires one additional step:
 ```    
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     [...just regular prepare for segue code...]
@@ -165,7 +165,7 @@ public extension UIViewController {
     }
 }
 ```
-Ok, se we are on home. Linking was delayed to until viewDidLoad was called and after that linking resumed:
+Ok, se we are on home. Linking was delayed to until viewDidLoad is called and after that linking resumed:
 ```
 extension HomeViewController: LinkHandler {
     func process(link: Link, animated: Bool) -> LinkHandling {
@@ -177,7 +177,7 @@ extension HomeViewController: LinkHandler {
             return .passedThrough(link)
         [...]
 ```
-Since we use enum it's easy to gather flows together and we know that to show legal (and other subcategories) we need to open settings first and then pass the link further in prepare for segue.
+Since we use enum it's easy to gather flows together and we know that to show legal (and other subcategories) we need to open settings first and then pass the link further.
 The last piece of the puzzle is settings screen where:
 ```
 func process(link: Link, animated: Bool) -> LinkHandling {
@@ -198,6 +198,7 @@ func process(link: Link, animated: Bool) -> LinkHandling {
     }
 }
 ```
+
 
 Inspired by:
 
