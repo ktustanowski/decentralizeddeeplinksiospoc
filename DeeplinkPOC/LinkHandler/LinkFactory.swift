@@ -22,9 +22,11 @@ enum LinkParserError: Error {
 
 //dlpoc://Item/3/Content/5
 //dlpoc://Item/6/Content/7
+//dlpoc://Item/6/Content/7?sso=go
 
 //dlpoc://Item/3/Promo/5
 //dlpoc://Item/6/Promo/7
+
 
 public struct LinkFactory {
     public static func make(with userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {

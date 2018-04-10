@@ -19,10 +19,19 @@ extension ContentViewController: LinkHandler {
             return .passedThrough(link)
         case .showContent(id: let contentId, parentId: _):
             selectItem(contentId)
+            if link.didAuthorize { showAuthorizedAlert() }
             return .opened(link)
         default:
             return .rejected(link, "Unrecognized link")
         }
+    }
+    
+    func showAuthorizedAlert() {
+        let alertController = UIAlertController(title: "Authorized", message:
+            "You were succesfully authorized!", preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func navigateToHome(with link: Link) {

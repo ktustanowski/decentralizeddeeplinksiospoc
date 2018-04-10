@@ -64,7 +64,7 @@ public extension LinkHandler {
     }
         
     // Call to complete deeplink handling if it was delayed
-    public func completeLinking(or alternative: (() -> Void)? = nil) { // maybe add sth like completeLinkingOr { } <- completion handler if completion wasn't needed
+    public func completeLinking(or alternative: (() -> Void)? = nil) {
         if case let .delayed(link, animated)? = self.linkHandling {
             open(link: link, animated: animated) as Void
             if case .delayed? = self.linkHandling { return }
