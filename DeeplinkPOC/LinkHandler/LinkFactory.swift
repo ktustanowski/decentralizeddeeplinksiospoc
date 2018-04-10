@@ -39,7 +39,7 @@ public struct LinkFactory {
         return DeepLinkParser.parse(url).logEvents(identifier: "DL")
     }
     
-    public static func make(with info: [String: String]) -> SignalProducer<Link?, NoError> {
+    public static func make(with info: [AnyHashable : Any]) -> SignalProducer<Link?, NoError> {
         return PushParser.parse(info)
     }
 }
@@ -92,7 +92,7 @@ private struct UniversalLinkParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return SignalProducer(value: nil) }
         
-        return SignalProducer(value: Link(intent:.showItem(id: "ul::1")))
+        return SignalProducer(value: Link(intent:.showItem(id: "STUB_IMPLEMENTATION")))
     }
 }
 
@@ -100,7 +100,7 @@ private struct ShortcutParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
         guard userActivity.activityType == "ForceTouchType" else { return SignalProducer(value: nil) }
         
-        return SignalProducer(value: Link(intent: .showItem(id: "s::1")))
+        return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
     }
 }
 
@@ -108,12 +108,12 @@ private struct SpotlightParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
         guard userActivity.activityType == CSSearchableItemActionType else { return SignalProducer(value: nil) }
         
-        return SignalProducer(value: Link(intent: .showItem(id: "sl::1")))
+        return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
     }
 }
 
 private struct PushParser {
-    static func parse(_ pushDictionary: [String : String]) -> SignalProducer<Link?, NoError> {
-        return SignalProducer(value: Link(intent: .showItem(id: "p::1")))
+    static func parse(_ pushPayload: [AnyHashable : Any]) -> SignalProducer<Link?, NoError> {
+        return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
     }
 }

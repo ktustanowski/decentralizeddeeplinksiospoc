@@ -11,7 +11,7 @@ import ReactiveSwift
 import Result
 
 public struct SingleSignOn {
-    public static func login(using link: Link) -> SignalProducer<LoginStatus, NoError> {
+    static func login(using link: Link) -> SignalProducer<LoginStatus, NoError> {
         switch link.authorization {
         case .singleSignOn(with: _):
             return SignalProducer<LoginStatus, NoError>(value: .loggedIn).delay(0.5, on: QueueScheduler.main).logEvents(identifier: "SSO_URL")

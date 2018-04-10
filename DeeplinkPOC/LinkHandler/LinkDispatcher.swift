@@ -36,7 +36,7 @@ public struct LinkDispatcher {
         startLinkFlow(with: linkProducer)
     }
     
-    public func handle(_ info: [String: String]) {
+    public func handle(_ info: [AnyHashable : Any]) {
         delegate?.willStartLinking()
         
         let linkProducer = LinkFactory.make(with: info)
