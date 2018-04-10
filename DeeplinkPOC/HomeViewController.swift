@@ -112,21 +112,19 @@ extension HomeViewController {
             allViewController?.pass(link: sender as? Link, animated: true)
         case "ToPromo":
             let promoViewController = segue.destination as? PromoViewController
-            if let link = sender as? Link {
-                if case let .showPromos(id: _, parentId: parentId) = link.intent {
-                    promoViewController?.viewModel = viewModel?.makePromoViewModel(with: parentId)
-                    promoViewController?.pass(link: link, animated: true)
-                }
+            if let link = sender as? Link,
+                case let .showPromos(id: _, parentId: parentId) = link.intent {
+                promoViewController?.viewModel = viewModel?.makePromoViewModel(with: parentId)
+                promoViewController?.pass(link: link, animated: true)
             } else {
                 promoViewController?.viewModel = viewModel?.makePromoViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
             }
         case "ToContent":
             let contentViewController = segue.destination as? ContentViewController
-            if let link = sender as? Link {
-                if case let .showContent(id: _, parentId: parentId) = link.intent {
-                    contentViewController?.viewModel = viewModel?.makeContentViewModel(with: parentId)
-                    contentViewController?.pass(link: link, animated: true)
-                }
+            if let link = sender as? Link,
+                case let .showContent(id: _, parentId: parentId) = link.intent {
+                contentViewController?.viewModel = viewModel?.makeContentViewModel(with: parentId)
+                contentViewController?.pass(link: link, animated: true)
             } else {
                 contentViewController?.viewModel = viewModel?.makeContentViewModel(with: tableView.indexPath(for: sender as! UITableViewCell)!)
             }

@@ -9,38 +9,6 @@
 import UIKit
 import LinkHandler
 
-struct AllViewModel {
-    let items: [String]
-    
-    func makePromoViewModel(with itemId: String) -> PromoViewModel {
-        return PromoViewModel(item: itemId)
-    }
-    
-    func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
-        return makePromoViewModel(with: items[indexPath.row])
-    }
-    
-    func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
-        return makeContentViewModel(with: items[indexPath.row])
-    }
-    
-    func makeContentViewModel(with itemId: String) -> ContentViewModel {
-        return ContentViewModel(item: itemId)
-    }
-}
-
-
-class AllViewController: UITableViewController {
-    var linkHandling: LinkHandling?
-    var viewModel: AllViewModel?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        completeLinking()
-    }
-}
-
 extension AllViewController: LinkHandler {
     func process(link: Link, animated: Bool) -> LinkHandling {
         guard isViewLoaded else { return .delayed(link, animated) }
@@ -55,6 +23,17 @@ extension AllViewController: LinkHandler {
         default:
             return .rejected(link, "Unsupported link")
         }
+    }
+}
+
+class AllViewController: UITableViewController {
+    var linkHandling: LinkHandling?
+    var viewModel: AllViewModel?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        completeLinking()
     }
 }
 
@@ -95,5 +74,25 @@ extension AllViewController {
         default:
             print("Ooops!")
         }
+    }
+}
+
+struct AllViewModel {
+    let items: [String]
+    
+    func makePromoViewModel(with itemId: String) -> PromoViewModel {
+        return PromoViewModel(item: itemId)
+    }
+    
+    func makePromoViewModel(with indexPath: IndexPath) -> PromoViewModel {
+        return makePromoViewModel(with: items[indexPath.row])
+    }
+    
+    func makeContentViewModel(with indexPath: IndexPath) -> ContentViewModel {
+        return makeContentViewModel(with: items[indexPath.row])
+    }
+    
+    func makeContentViewModel(with itemId: String) -> ContentViewModel {
+        return ContentViewModel(item: itemId)
     }
 }

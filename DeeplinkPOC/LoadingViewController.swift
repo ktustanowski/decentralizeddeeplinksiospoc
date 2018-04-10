@@ -34,9 +34,7 @@ class LoadingViewController: UIViewController {
         viewModel.loadData { [weak self] in
             // It we are deeplinking - this segue won't be presented to not break the flow
             // instead the deeplink process will move on
-            self?.completeLinking(or: {
-                self?.navigateToHome()
-            })
+            self?.completeLinking(or: { self?.navigateToHome() })
         }
     }
     
@@ -60,7 +58,7 @@ class LoadingViewModel {
     }
     
     func loadData(completion: (() -> Void)?) {
-        dispatchAfter(0.0) { [weak self] in
+        dispatchAfter(0.5) { [weak self] in
             self?.allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9].map { "Item \($0)" }
             self?.homeItems = [1, 2, 3, 4, 5].map { "Item \($0)" }
             completion?()
