@@ -60,7 +60,7 @@ public extension LinkHandler {
         let result = process(link: link, animated: animated)
         print(result)
         // ANALYTICS TIP: we can track deeplink process from here
-        linkHandling = result.inProgress ? result : nil
+        linkHandling = result
     }
         
     // Call to complete deeplink handling if it was delayed

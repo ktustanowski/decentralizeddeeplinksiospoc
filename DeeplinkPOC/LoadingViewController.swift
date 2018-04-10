@@ -32,7 +32,7 @@ class LoadingViewController: UIViewController {
     
     override func viewDidLoad() {
         viewModel.loadData { [weak self] in
-            // It we are deeplinking - this segue won't be presented to not break the flow
+            // If we are deeplinking - this segue won't be presented to not break the flow
             // instead the deeplink process will move on
             self?.completeLinking(or: { self?.navigateToHome() })
         }

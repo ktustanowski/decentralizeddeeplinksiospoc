@@ -25,14 +25,14 @@ extension SettingsViewController: LinkHandler {
         
         switch link.intent {
         case .showLogin:
-            performSegue(withIdentifier: "ToLogin", sender: link)
-            return .passedThrough(link)
+            performSegue(withIdentifier: "ToLogin", sender: nil)
+            return .opened(link)
         case .showTermsConditions:
-            performSegue(withIdentifier: "ToTermsConditions", sender: link)
-            return .passedThrough(link)
+            performSegue(withIdentifier: "ToTermsConditions", sender: nil)
+            return .opened(link)
         case .showLegal:
-            performSegue(withIdentifier: "ToLegal", sender: link)
-            return .passedThrough(link)
+            performSegue(withIdentifier: "ToLegal", sender: nil)
+            return .opened(link)
         default:
             return .rejected(link, "Unsupported link")
         }
