@@ -31,6 +31,8 @@ Thanks to this the application flow is not altered and when we open link on some
 This also offers great control on the flow. Item that we want to show is not accessibile from home screen? Not a problem, just navigate to screen containing all the items and show it from there. Item is on home? Even better. One step less.
 Additional bonus is that having this nodes setup we can reuse them. Let's say we need to be able to show user legal documents from content screen. We just prepare the link to legal page, dismiss the content ant tell home to navigate to settings because Home already knows how to handle settings links. 
 
+## The flow - high overview
+
 ## The architecture
 
 
