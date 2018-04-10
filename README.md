@@ -82,9 +82,10 @@ Which then uses specialized parsers for any supported kind of input:
 * SpotlightParser
 * PushParser
 
+![Linking preparation](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Linking_preparation.png)
+
 Let's use **dlpoc://Settings/Legal** since it should fairly easy to describe.
 When link was properly created and passed to delegate method LinkDispatcher work is done. It's where protocol oriented programming used in LinkHandler comes into play.
-
 ### LinkHandler
 It's a protocol that (with help of an extension) does the magic:
 ```
@@ -198,6 +199,7 @@ func process(link: Link, animated: Bool) -> LinkHandling {
     }
 }
 ```
+![Linking - navigation](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Linking_navigation_flow.png)
 
 **Note**: The delays etc. in the application are just to simulate some async stuff (like downloading data) going on. To make it behave a bit more closer to real world scenario application. This is also just PoC so it's pretty rough and unpolished. It's just to make this more understandable and testable in real-life-like situations.
 
