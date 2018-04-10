@@ -34,7 +34,7 @@ Additional bonus is that having this nodes setup we can reuse them. Let's say we
 ## The flow - high overview
 ![the flow - high overview](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Decentralised_Deeplinks.png?raw=true)
 
-## The architecture
+## How it works
 ### LinkDispatcher
 Top level structure and entry point to linking flow. We initialize it in AppDelegate. It prepares the Link to use later and decides when linking flow can start. So if we need to wait for a single sign on attempt to finish, any needed data / config loading or components initialization - we will. It's all based on signals so it's easy to extend. 
 
@@ -45,7 +45,7 @@ public protocol LinkDispatcherDelegate {
     func link(with link: Link)
 }
 ```
-and then when needed it asks LinkDispatcher to handle url:
+and then when needed it asks LinkDispatcher to handle url. Let's use **dlpoc://Settings/Legal** since it should fairly easy to:
 ```
 func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
     linkDispatcher.handle(url)
@@ -84,11 +84,121 @@ Which then uses specialized parsers for any supported kind of input:
 * SpotlightParser
 * PushParser
 
+When link was properly created and passed to delegate method LinkDispatcher work is done. It's where protocol oriented programming used in LinkHandler comes into play.
 
-I'm using term deep links but the goal is to actually support also other ways of interapp commuincation. To have one starting point for all this kind of flows in the app. Like Spotlight search, Universal likns etc.
+### LinkHandler
+It's a protocol that (with help of an extension) does the magic:
+```
+public protocol LinkHandler: class {
+    var linkHandling: LinkHandling? { get set }
+    func process(link: Link, animated: Bool) -> LinkHandling
+}
+```
+It uses LinkHandling which is basically an enum describing link handling state:
+```
+public enum LinkHandling: CustomStringConvertible {    
+    case opened(Link)    
+    case rejected(Link, String?)    
+    case delayed(Link, Bool)    
+    case passedThrough(Link)
+}
+```
+The process function contains actual implementation of how links should be handled in concrete view controllers.
 
-More info is coming...
-
+## The flow
+ AppDelegate, asked by the LinkDispatcher to start, asks LoadingViewController to open the Link.
+```
+func link(with link: Link) {
+    // Start deeplinking process
+    window?.rootViewController = UIStoryboard.init(name: "Main", bundle: nil).instantiateInitialViewController()
+    loadingViewController?.open(link: link, animated: true)
+}
+```
+The problem is that at this point LoadingViewController is not yet ready to fulfill this request. It needs to do some loading before. Good that we can handle this easily:
+```
+extension LoadingViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard viewModel.isDataLoaded == true else { return .delayed(link, animated) }
+        
+        switch link.intent {
+        default:
+            navigateToHome(with: link)
+            return .passedThrough(link)
+        }
+    }
+}
+```
+Before LoadingViewController is ready every linking attempt will end in delaying the flow `return .delayed(link, animated)`.
+Then we need to attempt to continue when data is ready which in this case will be when view model finishes data loading:
+```    
+override func viewDidLoad() {
+    viewModel.loadData { [weak self] in
+        // It we are deeplinking - this segue won't be presented to not break the flow
+        // instead the deeplink process will move on
+        self?.completeLinking(or: { self?.navigateToHome() })
+    }
+}
+```
+Ok. So we have the data and since we are in linking flow default segue to home is suppressed. What happens next is:
+```        
+switch link.intent {
+    default:
+        performSegue(withIdentifier: "ToHome", sender: link)
+        return .passedThrough(link)
+    }
+}
+```
+Since this screen is just "in the way" this logic is very simple. But we are using Storyboards so, sadly, passing link requires additional step:
+```    
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    [...just regular prepare for segue code...]
+    homeViewController?.pass(link: sender as? Link, animated: true)
+}
+```
+I just added small extension on UIViewController to make this a bit less painful:
+```
+public extension UIViewController {
+    public func pass(link: Link?, animated: Bool) {
+        guard let linkHandler = self as? LinkHandler,
+            let link = link else { return }
+        
+        linkHandler.open(link: link, animated: animated)
+    }
+}
+```
+Ok, se we are on home. Linking was delayed to until viewDidLoad was called and after that linking resumed:
+```
+extension HomeViewController: LinkHandler {
+    func process(link: Link, animated: Bool) -> LinkHandling {
+        guard isViewLoaded else { return .delayed(link, animated) }
+        
+        switch link.intent {
+        case .showSettings, .showLegal, .showLogin, .showTermsConditions:
+            performSegue(withIdentifier: "ToSettings", sender: link)
+            return .passedThrough(link)
+        [...]
+```
+Since we use enum it's easy to gather flows together and we know that to show legal (and other subcategories) we need to open settings first and then pass the link further in prepare for segue.
+The last piece of the puzzle is settings screen where:
+```
+func process(link: Link, animated: Bool) -> LinkHandling {
+    guard isViewLoaded else { return .delayed(link, animated) }
+        
+    switch link.intent {
+    case .showLogin:
+        performSegue(withIdentifier: "ToLogin", sender: nil)
+        return .opened(link)
+    case .showTermsConditions:
+        performSegue(withIdentifier: "ToTermsConditions", sender: nil)
+        return .opened(link)
+    case .showLegal:
+        performSegue(withIdentifier: "ToLegal", sender: nil)
+        return .opened(link)
+    default:
+        return .rejected(link, "Unsupported link")
+    }
+}
+```
 
 Inspired by:
 
