@@ -14,14 +14,9 @@ public struct SingleSignOn {
     public static func login(using link: Link) -> SignalProducer<LoginStatus, NoError> {
         switch link.authorization {
         case .singleSignOn(with: _):
-            return SignalProducer<LoginStatus, NoError> {observer, _ in
-                dispatchAfter(0.5) {
-                    observer.send(value: .loggedIn)
-                    observer.sendCompleted()
-                }
-                }.logEvents(identifier: "SSO_URL")
+            return SignalProducer<LoginStatus, NoError>(value: .loggedIn).delay(0.5, on: QueueScheduler.main).logEvents(identifier: "SSO_URL")
         default:
-            return SignalProducer.init(value: .notNeeded)
+            return SignalProducer(value: .notNeeded)
         }
     }
 }

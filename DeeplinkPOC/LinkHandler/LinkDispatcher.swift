@@ -54,7 +54,7 @@ public struct LinkDispatcher {
             // commences can be added to the zip
             SignalProducer.zip(ConfigurationProvider.load(), //load some config file
                                SingleSignOn.login(using: link), //try to login using SSO flow
-                               SignalProducer.init(value: link)) // just pass the link
+                               SignalProducer(value: link)) // just pass the link
             }.startWithResult { result in
                 switch result {
                 case .success(let (_, ssoLoginStatus, link)):
@@ -71,12 +71,6 @@ public struct LinkDispatcher {
 /// Some pre-linking-needed config loading
 struct ConfigurationProvider {
     static func load() -> SignalProducer<Bool, NoError> {
-        return SignalProducer {observer, _ in
-            dispatchAfter(1.0) {
-                // Pretend we load some app config here
-                observer.send(value: true)
-                observer.sendCompleted()
-            }
-            }.logEvents(identifier: "CP")
+        return SignalProducer(value: true).delay(1.0, on: QueueScheduler.main).logEvents(identifier: "CP")
     }
 }
