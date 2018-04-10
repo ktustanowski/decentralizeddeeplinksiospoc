@@ -199,6 +199,7 @@ func process(link: Link, animated: Bool) -> LinkHandling {
 }
 ```
 
+**Note**: The delays etc. in the application are just to simulate some async stuff (like downloading data) going on. To make it behave a bit more closer to real world scenario application. This is also just PoC so it's pretty rough and unpolished. It's just to make this more understandable and testable in real-life-like situations.
 
 Inspired by:
 
