@@ -1,6 +1,6 @@
 # Decentralised Deep Link - Proof of Concept
 
-Decentralised approach to iOS deeplinks
+Decentralised approach to iOS deep links (and more)
 
 ## The problem
 Deep links most of the time are "just implemented". Nothing more nothing less. Sure, how important they are depends on the app but overall it would be nice to have some pattern how to approach them in maintainable, future-proof manner. Not just black box implementation we are happy with. Until it works or until we need to extend it.
