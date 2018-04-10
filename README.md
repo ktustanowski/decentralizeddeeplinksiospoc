@@ -24,7 +24,7 @@ I wanted to be able to handle all, or as much as possible at least, ways of how 
 ### Preparation
 The part right before dispatching a link which consists of determinig of link type, some config loading, waiting for components initialization etc. is based on signals so it can be easily extended based on the needs.
 ### Navigation
-Instead of some huge central coordinator I followed the decentralised approach. PoC application navigation is based on storyboards so (it requires a bit more boilerplate code but). I like how overall this approach made the deeplinkh handling clear. The flow just goes from one node (view controller) to another and simple enum-fueled decision making is done on what to do next. 
+Instead of some huge central coordinator I followed the decentralised approach. PoC application navigation is based on storyboards so (it requires a bit more boilerplate code). What I like about this is how overall this approach made the deeplinkh handling clear. The flow just goes from one node (view controller) to another and simple enum-fueled decision making is done on what to do next. 
 
 Thanks to this the application flow is not altered and when we open link on some screen we are using regular navigation pattern. 
 
