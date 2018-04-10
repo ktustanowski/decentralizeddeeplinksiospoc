@@ -26,10 +26,8 @@ The part right before dispatching a link which consists of determinig of link ty
 ### Navigation
 Instead of some huge central coordinator I followed the decentralised approach. PoC application navigation is based on storyboards so (it requires a bit more boilerplate code). What I like about this is how overall this approach made the deeplinkh handling clear. The flow just goes from one node (view controller) to another and simple enum-fueled decision making is done on what to do next. 
 
-Thanks to this the application flow is not altered and when we open link on some screen we are using regular navigation pattern. 
-
 This also offers great control on the flow. Item that we want to show is not accessibile from home screen? Not a problem, just navigate to screen containing all the items and show it from there. Item is on home? Even better. One step less.
-Additional bonus is that having this nodes setup we can reuse them. Let's say we need to be able to show user legal documents from content screen. We just prepare the link to legal page, dismiss the content ant tell home to navigate to settings because Home already knows how to handle settings links. 
+Additional bonus is that having this nodes setup we can reuse them. Let's say we need to be able to show legal documents to the user from content screen. We just prepare the link to legal page, dismiss the content and tell home to navigate to settings because Home already knows how to this. 
 
 ## The flow - high overview
 ![the flow - high overview](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Decentralised_Deeplinks.png?raw=true)
@@ -45,7 +43,7 @@ public protocol LinkDispatcherDelegate {
     func link(with link: Link)
 }
 ```
-and then when needed it asks LinkDispatcher to handle url. Let's use **dlpoc://Settings/Legal** since it should fairly easy to:
+and then when needed it asks LinkDispatcher to handle url:
 ```
 func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
     linkDispatcher.handle(url)
@@ -84,6 +82,7 @@ Which then uses specialized parsers for any supported kind of input:
 * SpotlightParser
 * PushParser
 
+Let's use **dlpoc://Settings/Legal** since it should fairly easy to describe.
 When link was properly created and passed to delegate method LinkDispatcher work is done. It's where protocol oriented programming used in LinkHandler comes into play.
 
 ### LinkHandler
