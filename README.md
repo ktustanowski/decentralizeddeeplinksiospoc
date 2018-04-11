@@ -1,6 +1,6 @@
-# Decentralised Deep Link - Proof of Concept
+# Decentralized Deep Link - Proof of Concept
 
-Decentralised approach to iOS deep links (and more)
+Decentralized approach to iOS deep links (and more)
 
 ## The problem
 Deep links most of the time are "just implemented". Nothing more nothing less. Sure, how important they are depends on the app but overall it would be nice to have some pattern how to approach them in maintainable, future-proof manner. Not just black box implementation we are happy with. Until it works or until we need to extend it.
@@ -24,7 +24,7 @@ I wanted to be able to handle all, or as much as possible at least, ways of how 
 ### Preparation
 The part right before dispatching a link which consists of determinig of link type, some config loading, waiting for components initialization etc. is based on signals so it can be easily extended based on the needs.
 ### Navigation
-Instead of some huge central coordinator I followed the decentralised approach. PoC application navigation is based on storyboards so (it requires a bit more boilerplate code). What I like about this is how overall this approach made the deeplinkh handling clear. The flow just goes from one node (view controller) to another and simple enum-fueled decision making is done on what to do next. 
+Instead of some huge central coordinator I followed the decentralized approach. PoC application navigation is based on storyboards so (it requires a bit more boilerplate code). What I like about this is how overall this approach made the deeplinkh handling clear. The flow just goes from one node (view controller) to another and simple enum-fueled decision making is done on what to do next. 
 
 This also offers great control on the flow. Item that we want to show is not accessibile from home screen? Not a problem, just navigate to screen containing all the items and show it from there. Item is on home? Even better. One step less.
 Additional bonus is that having this nodes setup we can reuse them. Let's say we need to be able to show legal documents to the user from content screen. We just prepare the link to legal page, dismiss the content and tell home to navigate to settings because Home already knows how to this. 
@@ -82,9 +82,10 @@ Which then uses specialized parsers for any supported kind of input:
 * SpotlightParser
 * PushParser
 
+![Linking preparation](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Linking_preparation.png)
+
 Let's use **dlpoc://Settings/Legal** since it should fairly easy to describe.
 When link was properly created and passed to delegate method LinkDispatcher work is done. It's where protocol oriented programming used in LinkHandler comes into play.
-
 ### LinkHandler
 It's a protocol that (with help of an extension) does the magic:
 ```
@@ -198,6 +199,7 @@ func process(link: Link, animated: Bool) -> LinkHandling {
     }
 }
 ```
+![Linking - navigation](https://github.com/ktustanowski/decentraliseddeeplinksiospoc/blob/master/Images/Linking_navigation_flow.png)
 
 **Note**: The delays etc. in the application are just to simulate some async stuff (like downloading data) going on. To make it behave a bit more closer to real world scenario application. This is also just PoC so it's pretty rough and unpolished. It's just to make this more understandable and testable in real-life-like situations.
 
