@@ -31,10 +31,13 @@ enum LinkParserError: Error {
 public struct LinkFactory {
     public static func make(with userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
         return SignalProducer.merge(SpotlightParser.parse(userActivity).logEvents(identifier: "SL"),
-                                    UniversalLinkParser.parse(userActivity).logEvents(identifier: "UL"),
-                                    ShortcutParser.parse(userActivity).logEvents(identifier: "SC"))
+                                    UniversalLinkParser.parse(userActivity).logEvents(identifier: "UL"))
     }
     
+    public static func make(with shortcutItem: UIApplicationShortcutItem) -> SignalProducer<Link?, NoError> {
+        return ShortcutParser.parse(shortcutItem).logEvents(identifier: "SC")
+    }
+
     public static func make(with url: URL) -> SignalProducer<Link?, NoError> {
         return DeepLinkParser.parse(url).logEvents(identifier: "DL")
     }
@@ -90,23 +93,29 @@ private struct DeepLinkParser {
 
 private struct UniversalLinkParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return SignalProducer(value: nil) }
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else { return .empty }
         
         return SignalProducer(value: Link(intent:.showItem(id: "STUB_IMPLEMENTATION")))
     }
 }
 
 private struct ShortcutParser {
-    static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == "ForceTouchType" else { return SignalProducer(value: nil) }
-        
-        return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
+    static func parse(_ shortcutItem: UIApplicationShortcutItem) -> SignalProducer<Link?, NoError> {
+        switch shortcutItem.type {
+        case "poc.dl.shortcut.recent":
+            // Let's pretend this is the recently visited item to make this clear
+            return SignalProducer(value: Link(intent:.showContent(id: "Item 8 Content 5", parentId: "Item 8")))
+        case "poc.dl.shortcut.login":
+            return SignalProducer(value: Link(intent:.showLogin))
+        default:
+            return .empty
+        }
     }
 }
 
 private struct SpotlightParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == CSSearchableItemActionType else { return SignalProducer(value: nil) }
+        guard userActivity.activityType == CSSearchableItemActionType else { return .empty }
         
         return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
     }

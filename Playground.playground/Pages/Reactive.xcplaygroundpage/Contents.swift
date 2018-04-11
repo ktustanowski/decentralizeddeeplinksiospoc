@@ -26,7 +26,8 @@ struct LinkerDelegate: LinkDispatcherDelegate {
 
 let linkerDelegate = LinkerDelegate()
 let linker = LinkDispatcher(delegate: linkerDelegate)
-linker.handle(URL(string: "dlpoc://Settings")!)
+let activity = NSUserActivity(activityType: "invalid")
+linker.handle(activity)
 
 
 

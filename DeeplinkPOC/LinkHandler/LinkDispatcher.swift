@@ -43,6 +43,13 @@ public struct LinkDispatcher {
         startLinkFlow(with: linkProducer)
     }
 
+    public func handle(_ shortcutItem: UIApplicationShortcutItem) {
+        delegate?.willStartLinking()
+        
+        let linkProducer = LinkFactory.make(with: shortcutItem)
+        startLinkFlow(with: linkProducer)
+    }
+    
     private func startLinkFlow(with linkProducer: SignalProducer<Link?, NoError>) {
         let linkOnlyProducer = linkProducer
             .skipNil()

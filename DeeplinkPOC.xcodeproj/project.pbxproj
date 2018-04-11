@@ -24,6 +24,7 @@
 		9ADB5206207521A5000D03F1 /* LegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB5205207521A5000D03F1 /* LegalViewController.swift */; };
 		9ADB528520760F71000D03F1 /* LinkHandler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ADB528020760F0A000D03F1 /* LinkHandler.framework */; };
 		9ADB528B207611E3000D03F1 /* DispatchAfter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB528A207611E3000D03F1 /* DispatchAfter.swift */; };
+		9AE5921D207E392F00F59433 /* LinkHandler.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = 9ADB528020760F0A000D03F1 /* LinkHandler.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,20 @@
 			remoteInfo = LinkHandler;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9AE5920D207E392000F59433 /* Copy frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9AE5921D207E392F00F59433 /* LinkHandler.framework in Copy frameworks */,
+			);
+			name = "Copy frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		9A37F89B206E1DC6009CC4FF /* DeeplinkPOC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeeplinkPOC.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -288,6 +303,7 @@
 				9A37F898206E1DC6009CC4FF /* Frameworks */,
 				9A37F899206E1DC6009CC4FF /* Resources */,
 				9A37F8B0206E20C5009CC4FF /* Carthage Copy */,
+				9AE5920D207E392000F59433 /* Copy frameworks */,
 			);
 			buildRules = (
 			);
@@ -648,6 +664,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = DeeplinkPOC/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ktustanowski.DeeplinkPOC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -668,6 +685,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = DeeplinkPOC/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ktustanowski.DeeplinkPOC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
