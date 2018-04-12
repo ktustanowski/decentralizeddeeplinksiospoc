@@ -61,13 +61,16 @@ Internally LinkDispatcher uses LinkFactory to make links based on the input:
 ```
 public struct LinkFactory {
     public static func make(with userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        return SignalProducer.merge(SpotlightParser.parse(userActivity),
-                                    UniversalLinkParser.parse(userActivity),
-                                    ShortcutParser.parse(userActivity))
+        return SignalProducer.merge(SpotlightParser.parse(userActivity).logEvents(identifier: "SL"),
+                                    UniversalLinkParser.parse(userActivity).logEvents(identifier: "UL"))
     }
     
+    public static func make(with shortcutItem: UIApplicationShortcutItem) -> SignalProducer<Link?, NoError> {
+        return ShortcutParser.parse(shortcutItem).logEvents(identifier: "SC")
+    }
+
     public static func make(with url: URL) -> SignalProducer<Link?, NoError> {
-        return DeepLinkParser.parse(url)
+        return DeepLinkParser.parse(url).logEvents(identifier: "DL")
     }
     
     public static func make(with info: [AnyHashable : Any]) -> SignalProducer<Link?, NoError> {
