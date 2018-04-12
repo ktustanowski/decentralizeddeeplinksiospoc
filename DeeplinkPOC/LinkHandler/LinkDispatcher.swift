@@ -51,17 +51,16 @@ public struct LinkDispatcher {
     }
     
     private func startLinkFlow(with linkProducer: SignalProducer<Link?, NoError>) {
-        let linkOnlyProducer = linkProducer
+        let _ = linkProducer
             .skipNil()
             .take(first: 1)
             .logEvents(identifier: "LPP")
-
-        linkOnlyProducer.flatMap(.latest) { link in
+            .flatMap(.latest) { link in
             // Any other operation that needs to be done before linking flow
             // commences can be added to the zip
             SignalProducer.zip(ConfigurationProvider.load(), //load some config file
                                SingleSignOn.login(using: link), //try to login using SSO flow
-                               BeaconPoster.post(with: link), // try to post a beacon
+                               BeaconPoster.post(with: link),
                                SignalProducer(value: link)) // just pass the link
             }.startWithResult { result in
                 switch result {
@@ -86,15 +85,9 @@ struct ConfigurationProvider {
 /// Ssync stuff needed for some links
 struct BeaconPoster {
     static func post(with link: Link) -> SignalProducer<Bool, NoError> {
-        guard link.intent == .postBeacon else { return .empty }
+        guard link.intent == .postBeacon else { return SignalProducer(value: false) }
         
-        return SignalProducer { observer, _ in
-            dispatchAfter(0.5) { // Pretend we post something async here
-                print("Beacon posted!")
-                observer.send(value: true)
-                observer.sendCompleted()
-            }
-        }
+        return SignalProducer(value: true).delay(1.0, on: QueueScheduler.main).logEvents(identifier: "CP")
     }
 }
 

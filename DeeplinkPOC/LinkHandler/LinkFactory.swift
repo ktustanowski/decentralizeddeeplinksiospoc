@@ -44,12 +44,13 @@ public struct LinkFactory {
     }
     
     public static func make(with info: [AnyHashable : Any]) -> SignalProducer<Link?, NoError> {
-        return PushParser.parse(info)
+        return PushParser.parse(info).logEvents(identifier: "PS")
     }
 }
 
 private struct DeepLinkParser {
     static func parse(_ url: URL) -> SignalProducer<Link?, NoError> {
+        print(url.absoluteString)
         guard let rootName = url.host else { return .empty }
         let components = url.pathComponents.filter{ $0 != "/"}
 
@@ -118,9 +119,10 @@ private struct ShortcutParser {
 
 private struct SpotlightParser {
     static func parse(_ userActivity: NSUserActivity) -> SignalProducer<Link?, NoError> {
-        guard userActivity.activityType == CSSearchableItemActionType else { return .empty }
+        guard userActivity.activityType == "poc.dl.spotlight.items",
+            let url = userActivity.userInfo?["deeplinkURL"] as? URL else { return .empty }
         
-        return SignalProducer(value: Link(intent: .showItem(id: "STUB_IMPLEMENTATION")))
+        return DeepLinkParser.parse(url)
     }
 }
 

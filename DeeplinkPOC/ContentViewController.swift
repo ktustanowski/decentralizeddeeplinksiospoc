@@ -8,6 +8,7 @@
 
 import UIKit
 import LinkHandler
+import CoreSpotlight
 
 extension ContentViewController: LinkHandler {
     func process(link: Link, animated: Bool) -> LinkHandling {
@@ -55,6 +56,8 @@ class ContentViewController: UITableViewController {
             self?.tableView.reloadData()
             self?.completeLinking()
         }
+        
+        userActivity = viewModel?.userActivity
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -102,5 +105,15 @@ class ContentViewModel {
     
     init(item: String) {
         self.item = item
+    }
+    
+    var userActivity: NSUserActivity {
+        let activity = NSUserActivity(activityType: "poc.dl.spotlight.items")
+        activity.title = item
+        let linkTitle = item.components(separatedBy: " ").joined(separator: "/")
+        activity.userInfo = ["deeplinkURL": URL(string: "dlpoc://\(linkTitle)")]
+        activity.isEligibleForSearch = true
+
+        return activity
     }
 }
