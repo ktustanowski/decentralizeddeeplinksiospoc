@@ -11,7 +11,8 @@ import LinkHandler
 
 extension HomeViewController: LinkHandler {
     func process(link: Link, animated: Bool) -> LinkHandling {
-        guard isViewLoaded else { return .delayed(link, animated) }
+        let isVisible = view.window != nil // without this linking navigation was overlapping with unwinding
+        guard isViewLoaded && isVisible else { return .delayed(link, animated) }
         
         switch link.intent {
         case .showSettings, .showLegal, .showLogin, .showTermsConditions:
@@ -55,11 +56,13 @@ class HomeViewController: UITableViewController {
     var linkHandling: LinkHandling?
     var viewModel: HomeViewModel?
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         completeLinking()
     }
+    
+    @IBAction func unwindToHome(segue:UIStoryboardSegue) { }
 }
 
 struct HomeViewModel {

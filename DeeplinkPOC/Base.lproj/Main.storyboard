@@ -187,8 +187,12 @@
                             <outlet property="delegate" destination="fFP-3Y-e5P" id="0L4-3D-jYa"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <segue destination="wxC-ns-odc" kind="unwind" identifier="unwind" unwindAction="unwindToHomeWithSegue:" id="xov-q4-jfS"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bh7-ql-pDY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="wxC-ns-odc" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1764" y="1039"/>
         </scene>

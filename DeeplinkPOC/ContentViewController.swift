@@ -15,7 +15,7 @@ extension ContentViewController: LinkHandler {
         
         switch link.intent {
         case .showLegal:
-            navigateToHome(with: link)
+            performSegue(withIdentifier: "unwind", sender: link)
             return .passedThrough(link)
         case .showContent(id: let contentId, parentId: _):
             selectItem(contentId)
@@ -32,11 +32,6 @@ extension ContentViewController: LinkHandler {
         alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
         
         self.present(alertController, animated: true, completion: nil)
-    }
-    
-    func navigateToHome(with link: Link) {
-        navigationController?.popToRootViewController(animated: true)
-        (navigationController?.viewControllers.first as? LinkHandler)?.open(link: link, animated: true)
     }
     
     func selectItem(_ id: String) {
@@ -60,6 +55,14 @@ class ContentViewController: UITableViewController {
             self?.tableView.reloadData()
             self?.completeLinking()
         }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let linkHandler = segue.destination as? LinkHandler,
+            let linkHandlingViewController = linkHandler as? UIViewController
+        else { return }
+        
+        linkHandlingViewController.pass(link: sender as? Link, animated: true)
     }
 }
 
