@@ -26,8 +26,9 @@ struct LinkerDelegate: LinkDispatcherDelegate {
 
 let linkerDelegate = LinkerDelegate()
 let linker = LinkDispatcher(delegate: linkerDelegate)
-let activity = NSUserActivity(activityType: "invalid")
-linker.handle(activity)
+//let activity = NSUserActivity(activityType: "invalid")
+//linker.handle(activity)
+linker.handle(URL(string: "dlpoc://Beacon?sso=go")!)
 
 
 

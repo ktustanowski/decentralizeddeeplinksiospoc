@@ -61,10 +61,11 @@ public struct LinkDispatcher {
             // commences can be added to the zip
             SignalProducer.zip(ConfigurationProvider.load(), //load some config file
                                SingleSignOn.login(using: link), //try to login using SSO flow
+                               BeaconPoster.post(with: link), // try to post a beacon
                                SignalProducer(value: link)) // just pass the link
             }.startWithResult { result in
                 switch result {
-                case .success(let (_, ssoLoginStatus, link)):
+                case .success(let (_, ssoLoginStatus, _, link)):
                     self.delegate?.link(with: Link(intent: link.intent,
                                                    authorization: link.authorization,
                                                    didAuthorize: ssoLoginStatus == .loggedIn ))
@@ -79,5 +80,26 @@ public struct LinkDispatcher {
 struct ConfigurationProvider {
     static func load() -> SignalProducer<Bool, NoError> {
         return SignalProducer(value: true).delay(1.0, on: QueueScheduler.main).logEvents(identifier: "CP")
+    }
+}
+
+/// Ssync stuff needed for some links
+struct BeaconPoster {
+    static func post(with link: Link) -> SignalProducer<Bool, NoError> {
+        guard link.intent == .postBeacon else { return .empty }
+        
+        return SignalProducer { observer, _ in
+            dispatchAfter(0.5) { // Pretend we post something async here
+                print("Beacon posted!")
+                observer.send(value: true)
+                observer.sendCompleted()
+            }
+        }
+    }
+}
+
+func dispatchAfter(_ delay: Double, closure: @escaping () -> ()) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+        closure()
     }
 }

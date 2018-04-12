@@ -85,6 +85,8 @@ private struct DeepLinkParser {
             default:
                 return SignalProducer(value: Link(intent: .showSettings, authorization: authorization))
             }
+        case "Beacon":
+            return SignalProducer(value: Link(intent: .postBeacon, authorization: authorization))
         default:
             return .empty
         }
